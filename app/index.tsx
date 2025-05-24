@@ -1,22 +1,30 @@
-import { View, Text, StyleSheet, ImageBackground } from "react-native";
+import { Link } from "expo-router";
 import React from "react";
+import { ImageBackground, Pressable, Text, View } from "react-native";
+import icon from "../assets/images/iced-coffee.png";
 import "../global.css";
-import icon from "../assets/images/cup-of-drink.png";
 
-const app = () => {
+const App = () => {
   return (
-    <View className="bg-slate-900 h-full">
-      <View className="">
-        <ImageBackground
-          resizeMode="cover"
-          className="w-full h-full justify-center"
-          source={icon}
-        >
-          <Text className="text-slate-800 text-6xl text-center">app</Text>
-        </ImageBackground>
-      </View>
+    <View className="flex items-center justify-center">
+      <ImageBackground
+        resizeMode="cover"
+        className="w-full h-full justify-center"
+        source={icon}
+      >
+        <View className="flex justify-center items-center">
+          <Text className="text-white text-6xl text-center bg-black mb-10">
+            Coffee App
+          </Text>
+          <Link href="/contact" asChild>
+            <Pressable className="w-32 h-12 bg-black flex justify-center items-center rounded-full">
+              <Text className="text-white">Explore</Text>
+            </Pressable>
+          </Link>
+        </View>
+      </ImageBackground>
     </View>
   );
 };
 
-export default app;
+export default App;

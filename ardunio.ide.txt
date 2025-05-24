@@ -1,0 +1,83 @@
+// Whitelight mode
+// Pin assign
+#include <SoftwareSerial.h>
+int led = 9;
+int dwinRX = 10;
+int dwinTX = 11;
+int brightness = 13;
+
+SoftwareSerial dwin(dwinRX,dwinTX);
+unsigned int buffer[9];
+byte ledon[] ={0x5A,0XA5,0X05,0X82,0X20,0X00,0X00,0x00,0X01};
+byte ledoff[] ={0x5A,0XA5,0X05,0X82,0X21,0X00,0X00,0x00,0X00};
+byte brightnesson[] = {0x5A,0XA5,0X05,0X82,0X50,0X00,0X00,0x00,0X01};
+byte brightnessoff[] = {0x5A,0XA5,0X05,0X82,0X55,0X00,0X00,0x00,0X01};
+
+// pin describe
+void setup()
+{
+  pinMode(led, OUTPUT);
+  Serial.begin(9600);
+  dwin.begin(115200);
+  analogWrite(led,brightness);//minimum brightness
+}
+
+void loop()
+{
+  if(Serial1.available() >= 9)
+  {
+    for(int i = 0; i<9;i++)
+    {
+      buffer[i]= Serial.read();
+    }
+    if(buffer[0] == 0x5A)
+    {
+      unsigned int vpAddress = (buffer[4]<<8 | buffer[5]);
+      switch(vpAddress)
+      {
+        case 0X2000://on button
+        if(buffer[8]==1)
+        {
+          digitalWrite(led,HIGH);
+          Serial.print("on");
+        }
+        break;
+
+        case 0x2100://off button
+        if(buffer[8]== 0)
+        {
+          digitalWrite(led,LOW);
+          Serial.print("off");
+        }
+        break;
+        
+        // brightness on
+        case 0x5000:
+        if(buffer[8]==1)
+        {
+          brightness += 32;
+          if(brightness >255)
+          brightness = 255;
+        analogWrite(led,brightness);
+        Serial.print("brightness increased :");
+        Serial.println(brightness);
+        }
+        break;
+
+        case 0x5500:
+        if(buffer[8]==1)
+        {
+          brightness -= 32;
+          if(brightness <13)
+          brightness = 13;
+        analogWrite(led,brightness);
+        Serial.print("brightness decreased :");
+        Serial.println(brightness);
+        }
+        break;
+
+
+      }
+    }
+  }
+}
